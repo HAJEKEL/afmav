@@ -14,6 +14,9 @@ def find_color(image, color):
     elif color == "black":
         lower= np.array([0, 0, 0])
         upper = np.array([115, 127, 255])
+    elif color == "rainbow":
+        lower= np.array([0, 0, 0])
+        upper = np.array([115, 97, 156])
     mask_yuv = cv2.inRange(yuv_image, lower, upper)
     result_yuv = cv2.bitwise_and(image, image, mask=mask_yuv)
     result_yuv = cv2.threshold(result_yuv[:, :, 0], 1, 255, cv2.THRESH_BINARY)[1]
@@ -60,11 +63,26 @@ for image_file in image_files:
     cv2.imshow('Result YUV', result_yuv)
     cv2.waitKey(0)
 
+image_files = os.listdir("rainbow")
+count_rainbow = []
+
+for image_file in image_files:
+# Load the image
+    image_path = os.path.join("rainbow", image_file)
+    image = cv2.imread(image_path)
+    result_yuv, count = find_color(image,"rainbow")
+    count_rainbow .append(count)
+    cv2.imshow('Original', image)
+    cv2.imshow('Result YUV', result_yuv)
+    cv2.waitKey(0)
+
 print("Number of black pixels for the black images",count_black)
 print("Number of green pixels for the green images",count_green)
 print("Number of white pixels for the white images",count_white)
+print("Number of rainbow pixels for the rainbow images",count_rainbow)
 
 print("If there are more pixels than the threshold, drone should turn:")
 print("black_threshold =",min(count_black))
 print("green_threshold =",min(count_green))
 print("white_threshold =",min(count_white))
+print("rainbow_threshold =",min(count_rainbow))
